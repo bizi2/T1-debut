@@ -1,0 +1,43 @@
+server:
+  port: 8080  # Порт приложения (по умолчанию 8080)
+
+spring:
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9094} # Будет использовать kafka:9094 в Docker
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties:
+      security.protocol: PLAINTEXT
+
+  # Настройки Actuator (метрики и мониторинг)
+  actuator:
+    metrics:
+      export:
+        prometheus:
+          enabled: true  # Включить экспорт метрик в Prometheus
+
+  # Настройки логирования (опционально)
+  logging:
+    level:
+      root: INFO
+      com.weyland: DEBUG  # Детальные логи для вашего пакета
+
+# Кастомные настройки проекта
+weyland:
+  android:
+    queue:
+      max-size: 100  # Максимальный размер очереди команд
+    audit:
+      default-topic: android-audit-log  # Топик для аудита по умолчанию
+      console-log-enabled: true  # Вывод аудита в консоль
+
+# Настройки метрик Micrometer
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Открыть все эндпоинты Actuator
+  metrics:
+    tags:
+      application: ${spring.application.name}  # Тег для метрик
